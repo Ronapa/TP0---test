@@ -39,7 +39,7 @@ class System
 		//void load_querys_from_csv(istream *);
 		//void execute_query(const *query)
 
-		
+		friend istream & operator>>(std::istream &in, System & system);
 
 };
 
