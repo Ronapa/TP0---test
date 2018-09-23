@@ -176,6 +176,8 @@ void Query::execute_query()
 			cout << aux_sensor->get_max_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures()) << endl;
 			cout << "Mediciones: ";
 			cout << aux_sensor->get_amount_of_valid_temperatures_in_range(0,aux_sensor->get_amount_of_temperature_measures()) << endl;
+
+			delete aux_sensor;
 		}
 	}else
 	{

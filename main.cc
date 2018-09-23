@@ -174,6 +174,11 @@ int main(int argc, char * const argv[])
 		cout << "query numero: " << i << endl; 
 		query_array[i]->execute_query();
 	}
+	for (i=0 ; i<query_array.size() ; i++)
+	{
+		delete query_array[i];
+	}
+
 	
 	return 0;
 
