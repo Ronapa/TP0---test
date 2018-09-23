@@ -11,14 +11,16 @@
 
 using namespace std;
 
+
+
 class System
 {
 	private:
 
 		Array<sensor *> sensor_array;
 		Array<string> sensor_names;
-
-		void _split(const string& s, const char c, Array<string>& v);
+		void _split(const string& s , const char c , Array<string>& v); 
+		
 
 	public:
 
@@ -36,10 +38,11 @@ class System
 		float get_min_temperature_in_range_of_sensor_at_index(const int & , const int & , const int &);
 		float get_max_temperature_in_range_of_sensor_at_index(const int & , const int & , const int &);
 		float get_temperature_at_of_sensor_at_index(const int & , const int &);
+		int get_amount_of_valid_temperatures_in_range_at_index(const int & , const int & , const int &);
 		//void load_querys_from_csv(istream *);
-		//void execute_query(const *query)
+		//void execute_query(const *query);
 
-		friend istream & operator>>(std::istream &in, System & system);
+		friend std::istream & operator >>(std::istream &, System &);
 
 };
 

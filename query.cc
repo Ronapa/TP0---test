@@ -111,7 +111,6 @@ void Query::execute_query()
 						{
 							if((aux = target_system->get_temperature_at_of_sensor_at_index(j,k)) != -273)
 							{
-								cout << aux << " ";
 								accum += aux;
 								valid_meassures++;
 							}else
@@ -121,9 +120,13 @@ void Query::execute_query()
 						}
 					}
 				}
-				cout << " " << accum << " " << valid_meassures << endl;
-				cout << accum/valid_meassures << "it:" << k << endl;
-				aux_sensor->add_temperature_to_sensor(accum/valid_meassures);
+				if (valid_meassures == 0)
+				{
+					aux_sensor->add_temperature_to_sensor(-273);
+				}else 
+				{
+					aux_sensor->add_temperature_to_sensor(accum/valid_meassures);
+				}
 				accum =0;
 				valid_meassures = 0;
 			}
@@ -134,6 +137,8 @@ void Query::execute_query()
 			cout << aux_sensor->get_min_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures()) << endl;
 			cout << "Máximo: ";
 			cout << aux_sensor->get_max_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures()) << endl;
+			cout << "Mediciones: ";
+			cout << aux_sensor->get_amount_of_valid_temperatures_in_range(0,aux_sensor->get_amount_of_temperature_measures()) << endl;
 		}
 	}else
 	{
@@ -152,14 +157,12 @@ void Query::_validate_query()
 		{
 			if (sensors_in_query[i] == target_system->get_sensor_in_system_at_index(j))
 			{
-				cout << sensors_in_query[i] << "   " << target_system->get_sensor_in_system_at_index(j) << endl;
 				valid_sensors ++;
 			}
 		}
 	}
 	if (valid_sensors == get_amount_of_sensors_in_query())
 	{
-		cout << valid_sensors << endl;
 		valid_query = TRUE;
 	}
 }

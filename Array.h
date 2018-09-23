@@ -12,6 +12,8 @@
 #define ARRAY_DEFAULT_SIZE 1
 #define ARRAY_GROWTH_RATE 5
 
+using namespace std;
+
 template <typename T>
 class Array
 {

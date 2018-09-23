@@ -163,11 +163,12 @@ int main(int argc, char * const argv[])
 	System system_CPU;
 
 	system_CPU.load_sensors_from_csv(*iss);
-	//Query query_test("CPU Package");
-	//query_test.add_sensor_to_query("CPU");
-	//query_test.add_sensor_to_query("Motherboard");
-	//query_test.add_sensor_to_query("GPU Thermal Diode");
-	
+
+	Query query_test("CPU Package");
+	query_test.add_sensor_to_query("CPU");
+	query_test.add_sensor_to_query("Motherboard");
+	query_test.add_sensor_to_query("GPU Thermal Diode");
+	/*
 	Query query_test("Core #0 Usage [%]");
 	query_test.add_sensor_to_query("Core #1 Usage [%]");
 	query_test.add_sensor_to_query("Core #2 Usage [%]");
@@ -178,11 +179,11 @@ int main(int argc, char * const argv[])
 	//query_test.add_sensor_to_query("Core #7 Usage [%]");
 	query_test.add_sensor_to_query(system_CPU.get_sensor_in_system_at_index(7));
 
-	
+	*/
 
 	query_test.set_target_system(&system_CPU);
 	query_test.set_left_bound(0);
-	query_test.set_right_bound(1);
+	query_test.set_right_bound(500);
 
 	query_test.execute_query();
 	

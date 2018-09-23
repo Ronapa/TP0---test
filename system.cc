@@ -33,37 +33,34 @@ void System::add_new_sensor_to_system(const string & sensor_name)
 	sensor_names.push_back(sensor_name);
 }
 
-void System::load_sensors_from_csv(istream &i)
+void System::load_sensors_from_csv(istream &in)
 {
-   string tmp;
    Array<string> v;
-   float temperature;
+   float measure;
+   string tmp;
 
-   if(!i.eof())
+   if(!in.eof())
    {
-      getline(i, tmp, '\n');
+      getline(in, tmp, '\n');
       _split(tmp, ',', v);
       for (int i = 0; i < v.size(); ++i)
       {
+         if (i == v.size()-1)
+         {
+            v[i].erase(v[i].size()-1);
+         }
          add_new_sensor_to_system(v[i]);
       }
       v.clear();
    }
-   while (!i.eof()) {
-      getline(i, tmp, '\n');
 
-      _split(tmp, ',', v);
-      for (int i = 0; i < v.size(); ++i)
-      {
-         stringstream str_st (v[i]);
-         if(v[i]=="" || !(str_st>>temperature))
-            temperature=-273;
-         str_st.str(string());
-         sensor_array[i]->add_temperature_to_sensor(temperature);
-      }
-      v.clear();
+   while (!in.eof()) 
+   {
+      getline(in, tmp, '\n');
+      stringstream str_st (tmp);
+      str_st>>*this;
       tmp.clear();
-   }
+   }  
 }
 
 int System::get_amount_of_sensors_in_system()
@@ -114,6 +111,15 @@ void System::load_sensor_with_array(const Array<float> & arr, const string &name
 	
 }
 
+int System::get_amount_of_valid_temperatures_in_range_at_index(const int & index, const int & left, const int &right)
+{
+   if (index >= sensor_array.size())
+   {
+      return -1;
+   }
+   //return sensor_array[index].get_amount_of_valid_temperatures_in_range(left,right);
+}
+
 void System::_split(const string& s, const char c,
            Array<string>& v) {
    int i = 0;
@@ -125,10 +131,64 @@ void System::_split(const string& s, const char c,
       j = s.find(c, j);
 
       if (j < 0) {
-      	j = s.find('\0',j);
-         v.push_back(s.substr(i, j-i));
+         v.push_back(s.substr(i, s.length()));
       }
    }
 }
 
+std::istream & operator>>(std::istream &in, System & system)
+{
+   float measure = 0;
+   char ch = 0;
+   int i=0;
+   
+   if( !(in >> measure) )
+   {
+      measure = -273;
+   }
+   system.sensor_array[i]->add_temperature_to_sensor(measure);
+   while( (in >> ch) && (ch == ',') )
+   {  
+      i++; 
+      if( !(in >> measure) )
+      {
+         measure = -273;
+      }
+      system.sensor_array[i]->add_temperature_to_sensor(measure);
+   } 
+    return in;
+}
+
+
+
 #endif
+
+/*
+void System::load_sensors_from_csv(istream &in)
+{
+   Array<string> v;
+   Array<string> j;
+   float measure;
+   string tmp;
+
+   if(!in.eof())
+   {
+      getline(in, tmp, '\n');
+      _split(tmp, ',', v);
+      for (int i = 0; i < v.size(); ++i)
+      {
+         cout<<v[i].size()<<endl;
+         add_new_sensor_to_system(v[i]);
+      }
+      v.clear();
+   }
+
+   while (!in.eof()) 
+   {
+      getline(in, tmp, '\n');
+      stringstream str_st (tmp);
+      str_st>>*this;
+      tmp.clear();
+   }
+}
+*/
