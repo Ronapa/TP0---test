@@ -9,6 +9,7 @@
 #include "Array.h"
 #include "system.h"
 #include "sensor.h"
+#include "utilities.h"
 
 using namespace std;
 
@@ -117,23 +118,7 @@ int System::get_amount_of_valid_temperatures_in_range_at_index(const int & index
    {
       return -1;
    }
-   //return sensor_array[index].get_amount_of_valid_temperatures_in_range(left,right);
-}
-
-void System::_split(const string& s, const char c,
-           Array<string>& v) {
-   int i = 0;
-   int j = s.find(c);
-
-   while (j >= 0) {
-      v.push_back(s.substr(i, j-i));
-      i = ++j;
-      j = s.find(c, j);
-
-      if (j < 0) {
-         v.push_back(s.substr(i, s.length()));
-      }
-   }
+   return sensor_array[index]->get_amount_of_valid_temperatures_in_range(left,right);
 }
 
 std::istream & operator>>(std::istream &in, System & system)
@@ -158,37 +143,48 @@ std::istream & operator>>(std::istream &in, System & system)
    } 
     return in;
 }
-
-
-
-#endif
-
 /*
-void System::load_sensors_from_csv(istream &in)
+void System::load_querys_from_csv(istream & qin , Array<Query> & query_array)
 {
    Array<string> v;
-   Array<string> j;
    float measure;
    string tmp;
+   int i=0 , k=0;
 
-   if(!in.eof())
+      while (!qin.eof()) 
    {
-      getline(in, tmp, '\n');
-      _split(tmp, ',', v);
-      for (int i = 0; i < v.size(); ++i)
-      {
-         cout<<v[i].size()<<endl;
-         add_new_sensor_to_system(v[i]);
+         getline(qin, tmp, '\n');
+         _split(tmp, ',', v);
+         for (i = 0 ; i<v.size() ; i++)
+         {
+            if (i<(v.size() -2))
+            {
+               query_array[k].add_sensor_to_query(v[i]);
+            }else
+            {
+               if ( i=(v.size()-2))
+               {
+                  stringstream str_st(v[i]);
+                  if(!(str_st>>left_bound) || (left_bound < 0))
+                  {
+                     cout << "query rota izq" << endl;
+                     left_bound = -1;
+                  }
+               }else
+               {
+                  stringstream str_st(v[i]);
+                  if(!(str_st>>right_bound) || (right_bound < 0))
+                  {
+                     cout << "query rota der" << endl;
+                     right_bound = -1;
+                  }
+               }
+            }
+         }
+         
+         v.clear();
       }
-      v.clear();
-   }
-
-   while (!in.eof()) 
-   {
-      getline(in, tmp, '\n');
-      stringstream str_st (tmp);
-      str_st>>*this;
-      tmp.clear();
-   }
 }
+
 */
+#endif

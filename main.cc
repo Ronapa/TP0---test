@@ -18,8 +18,8 @@
 
 using namespace std;
 
+static void opt_data(string const &);
 static void opt_input(string const &);
-static void opt_query(string const &);
 static void opt_output(string const &);
 static void opt_help(string const &);
 
@@ -52,8 +52,8 @@ static void opt_help(string const &);
 
 /**************** Elementos globales ******************/
 static option_t options[] = {
-	{1, "i", "input", "-", opt_input, OPT_DEFAULT},
-	{1, "q", "query", "-", opt_query, OPT_DEFAULT},
+	{1, "d", "data", "-", opt_data, OPT_MANDATORY},
+	{1, "i", "input", "-", opt_input, OPT_MANDATORY},
 	{1, "o", "output", "-", opt_output, OPT_DEFAULT},
 	{0, "h", "help", NULL, opt_help, OPT_DEFAULT},
 	{0, },
@@ -63,14 +63,14 @@ static istream *iss = 0;	// Input Stream (clase para manejo de los flujos de ent
 static ostream *oss = 0;	// Output Stream (clase para manejo de los flujos de salida)
 static istream *qss = 0;	// Output Stream (clase para manejo de los flujos de salida)
 static fstream ifs; 		// Input File Stream (derivada de la clase ifstream que deriva de istream para el manejo de archivos)
+static fstream ifs2;
 static fstream ofs;			// Output File Stream (derivada de la clase ofstream que deriva de ostream para el manejo de archivos)
 
 
 
 /*****************************************************/
 
-static void
-opt_input(string const &arg)
+static void opt_data(string const &arg)
 {
 	// Si el nombre del archivos es "-", usaremos la entrada
 	// estándar. De lo contrario, abrimos un archivo en modo
@@ -97,8 +97,7 @@ opt_input(string const &arg)
 	}
 }
 
-static void
-opt_output(string const &arg)
+static void opt_output(string const &arg)
 {
 	// Si el nombre del archivos es "-", usaremos la salida
 	// estándar. De lo contrario, abrimos un archivo en modo
@@ -122,7 +121,7 @@ opt_output(string const &arg)
 	}
 }
 
-static void opt_query(string const &arg)
+static void opt_input(string const &arg)
 {
 	// Si el nombre del archivos es "-", usaremos la entrada
 	// estándar. De lo contrario, abrimos un archivo en modo
@@ -132,10 +131,10 @@ static void opt_query(string const &arg)
 		qss = &cin;		// Establezco la entrada estandar cin como flujo de entrada
 	}
 	else {
-		ifs.open(arg.c_str(), ios::in); // c_str(): Returns a pointer to an array that contains a null-terminated
+		ifs2.open(arg.c_str(), ios::in); // c_str(): Returns a pointer to an array that contains a null-terminated
 										// sequence of characters (i.e., a C-string) representing
 										// the current value of the string object.
-		qss = &ifs;
+		qss = &ifs2;
 	}
 
 	// Verificamos que el stream este OK.
@@ -158,34 +157,23 @@ static void opt_help(string const &arg)
 
 int main(int argc, char * const argv[])
 {
+	Array<Query *> query_array;
+	int i=0;
 	cmdline cmdl(options);
 	cmdl.parse(argc, argv);
 	System system_CPU;
 
 	system_CPU.load_sensors_from_csv(*iss);
+	cout << "cargue sensores: " << system_CPU.get_amount_of_sensors_in_system() << endl;
+	Query::load_querys_from_csv(*qss,query_array);
 
-	Query query_test("CPU Package");
-	query_test.add_sensor_to_query("CPU");
-	query_test.add_sensor_to_query("Motherboard");
-	query_test.add_sensor_to_query("GPU Thermal Diode");
-	/*
-	Query query_test("Core #0 Usage [%]");
-	query_test.add_sensor_to_query("Core #1 Usage [%]");
-	query_test.add_sensor_to_query("Core #2 Usage [%]");
-	query_test.add_sensor_to_query("Core #3 Usage [%]");
-	query_test.add_sensor_to_query("Core #4 Usage [%]");
-	query_test.add_sensor_to_query("Core #5 Usage [%]");
-	query_test.add_sensor_to_query("Core #6 Usage [%]");
-	//query_test.add_sensor_to_query("Core #7 Usage [%]");
-	query_test.add_sensor_to_query(system_CPU.get_sensor_in_system_at_index(7));
-
-	*/
-
-	query_test.set_target_system(&system_CPU);
-	query_test.set_left_bound(0);
-	query_test.set_right_bound(500);
-
-	query_test.execute_query();
+	cout << "cargue algo" << endl;
+	for (i=0 ; i<query_array.size() ; i++)
+	{
+		query_array[i]->set_target_system(&system_CPU);
+		cout << "query numero: " << i << endl; 
+		query_array[i]->execute_query();
+	}
 	
 	return 0;
 

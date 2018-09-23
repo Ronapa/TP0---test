@@ -6,6 +6,7 @@
 #include "Array.h"
 #include "system.h"
 #include "sensor.h"
+#include "utilities.h"
 
 using namespace std;
 
@@ -33,19 +34,28 @@ class Query
 		bool_t valid_query;
 
 	public:
+		Query();
 		Query(const string &);
 		~Query();
 
 		void set_left_bound(const int &);
 		void set_right_bound(const int &);
-		void add_sensor_to_query(const string &);
+		void set_left_bound(const string &);
+		void set_right_bound(const string &);
 		void set_target_system(System *);
-		void execute_query();
 
+		void add_sensor_to_query(const string &);
+		
 		size_t get_amount_of_sensors_in_query();
 		string get_sensor_in_query_at_index(const int &);
 		int get_left_bound();
 		int get_right_bound();
+
+		void execute_query();
+
+		friend istream & operator>>(std::istream &in, Query & query);
+		static void load_querys_from_csv(istream& , Array<Query *>& );
+
 };
 
 #endif

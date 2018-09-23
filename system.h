@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include "Array.h"
 #include "sensor.h"
+#include "utilities.h"
 
 using namespace std;
 
@@ -19,8 +20,6 @@ class System
 
 		Array<sensor *> sensor_array;
 		Array<string> sensor_names;
-		void _split(const string& s , const char c , Array<string>& v); 
-		
 
 	public:
 
@@ -28,7 +27,9 @@ class System
 		~System();
 
 		void add_new_sensor_to_system(const string &);
+
 		void load_sensors_from_csv(istream &);
+
 		void load_sensor_with_array(const Array<float> &, const string &);
 		
 		int get_amount_of_sensors_in_system();

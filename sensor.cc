@@ -64,40 +64,65 @@ float sensor::get_average_temperature_in_range(const int & left, const int & rig
 
 float sensor::get_min_temperature_in_range(const int &left , const int &right)
 {
-	if(left < 0 || right < 0)
+	if(left < 0 || right < 0 || left > temperature_values.size())
 	{
 		return -273;
 	}
-	float aux = temperature_values[left];
+	float aux;
+	int amount_of_values = 0;
+	if ((aux = temperature_values[left]) != -273)
+	{
+		amount_of_values++;
+	}
 	int i=left+1;
 	while (i <= right && (size_t)i < temperature_values.size())
 	{
 		if (temperature_values[i] < aux && temperature_values[i] != -273)
 		{
 			aux = temperature_values[i];
+			amount_of_values++;
 		}
 		i++;
 	}
-	return aux;
+	if (amount_of_values == 0)
+	{
+		return -273;
+	}else
+	{
+		return aux;		
+	}
+
 }
 
 float sensor::get_max_temperature_in_range(const int &left , const int &right)
 {
-	if(left < 0 || right < 0)
+	if(left < 0 || right < 0 || left > temperature_values.size())
 	{
 		return -273;
-	}	
-	float aux = temperature_values[left];
+	}
+	float aux;
+	int amount_of_values = 0;
+	if ((aux = temperature_values[left]) != -273)
+	{
+		amount_of_values++;
+	}
 	int i=left+1;
 	while (i <= right && (size_t)i < temperature_values.size())
 	{
 		if (temperature_values[i] > aux && temperature_values[i] != -273)
 		{
 			aux = temperature_values[i];
+			amount_of_values++;
 		}
 		i++;
 	}
-	return aux;
+	if (amount_of_values == 0)
+	{
+		return -273;
+	}else
+	{
+		return aux;		
+	}
 }
 
 float sensor::get_temperature_at(const int &index)
