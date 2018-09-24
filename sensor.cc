@@ -18,7 +18,7 @@ sensor::sensor(const string &name)
 
 sensor::~sensor()
 {
-	cout << "destrui el sensor: " << sensor_name << endl;
+
 }
 
 
@@ -46,7 +46,7 @@ float sensor::get_average_temperature_in_range(const int & left, const int & rig
 	float accum=0;
 	int i=left;
 	int amount_of_values = 0;
-	while (i <= right && (size_t)i < temperature_values.size())
+	while (i < right && (size_t)i < temperature_values.size())
 	{
 		if (temperature_values[i] != -273)
 		{
@@ -75,7 +75,7 @@ float sensor::get_min_temperature_in_range(const int &left , const int &right)
 		amount_of_values++;
 	}
 	int i=left+1;
-	while (i <= right && (size_t)i < temperature_values.size())
+	while (i < right && (size_t)i < temperature_values.size())
 	{
 		if (temperature_values[i] < aux && temperature_values[i] != -273)
 		{
@@ -107,7 +107,7 @@ float sensor::get_max_temperature_in_range(const int &left , const int &right)
 		amount_of_values++;
 	}
 	int i=left+1;
-	while (i <= right && (size_t)i < temperature_values.size())
+	while (i < right && (size_t)i < temperature_values.size())
 	{
 		if (temperature_values[i] > aux && temperature_values[i] != -273)
 		{
@@ -147,7 +147,7 @@ int sensor::get_amount_of_valid_temperatures_in_range(const int &left , const in
 	{
 		return -1;
 	}
-	while (i <= right && (size_t)i<temperature_values.size())
+	while (i < right && (size_t)i<temperature_values.size())
 	{
 		if(temperature_values[i] != -273)
 		{

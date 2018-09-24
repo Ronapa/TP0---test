@@ -164,14 +164,12 @@ int main(int argc, char * const argv[])
 	System system_CPU;
 
 	system_CPU.load_sensors_from_csv(*iss);
-	cout << "cargue sensores: " << system_CPU.get_amount_of_sensors_in_system() << endl;
+
 	Query::load_querys_from_csv(*qss,query_array);
 
-	cout << "cargue algo" << endl;
 	for (i=0 ; i<query_array.size() ; i++)
 	{
 		query_array[i]->set_target_system(&system_CPU);
-		cout << "query numero: " << i << endl; 
 		query_array[i]->execute_query();
 	}
 	for (i=0 ; i<query_array.size() ; i++)

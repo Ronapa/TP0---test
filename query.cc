@@ -123,12 +123,10 @@ void Query::execute_query()
 				{
 					if (sensors_in_query[i] == target_system->get_sensor_in_system_at_index(j))
 					{
-						cout << "Promedio: ";
-						cout << target_system->get_average_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound) << endl;
-						cout << "Mínimo: ";
-						cout << target_system->get_min_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound) << endl;
-						cout << "Máximo: ";
-						cout << target_system->get_max_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound) << endl;
+						cout << target_system->get_average_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound) <<  " ";
+						cout << target_system->get_min_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound) << " " ;
+						cout << target_system->get_max_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound) << " ";
+						cout << target_system->get_amount_of_valid_temperatures_in_range_at_index(j,left_bound,right_bound) << endl;
 					}
 				}
 			}
@@ -138,7 +136,7 @@ void Query::execute_query()
 			float accum =0;
 			float aux=0;
 			size_t valid_meassures = 0;
-			for (k = left_bound ; k<=right_bound ; k++)
+			for (k = left_bound ; k<right_bound ; k++)
 			{
 				for (i=0 ;  i<get_amount_of_sensors_in_query() ; i++)
 				{
@@ -168,13 +166,9 @@ void Query::execute_query()
 				valid_meassures = 0;
 			}
 			
-			cout << "Promedio: ";
-			cout << aux_sensor->get_average_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures()) << endl;
-			cout << "Mínimo: ";
-			cout << aux_sensor->get_min_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures()) << endl;
-			cout << "Máximo: ";
-			cout << aux_sensor->get_max_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures()) << endl;
-			cout << "Mediciones: ";
+			cout << aux_sensor->get_average_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures()) <<  " ";
+			cout << aux_sensor->get_min_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures()) <<  " ";
+			cout << aux_sensor->get_max_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures()) << " ";
 			cout << aux_sensor->get_amount_of_valid_temperatures_in_range(0,aux_sensor->get_amount_of_temperature_measures()) << endl;
 
 			delete aux_sensor;
