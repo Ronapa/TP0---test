@@ -46,7 +46,7 @@ class Query
 
 		void add_sensor_to_query(const string &);
 		
-		size_t get_amount_of_sensors_in_query();
+		int get_amount_of_sensors_in_query();
 		string get_sensor_in_query_at_index(const int &);
 		int get_left_bound();
 		int get_right_bound();

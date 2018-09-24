@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include "Array.h"
+#include "utilities.h"
 
 using namespace std;
 
@@ -11,7 +12,7 @@ class sensor
 {
 	private:
 
-		Array<float> temperature_values;
+		Array<float> temperature_values; 
 		string sensor_name;
 		
 	public:

@@ -37,16 +37,15 @@ void System::add_new_sensor_to_system(const string & sensor_name)
 void System::load_sensors_from_csv(istream &in)
 {
    Array<string> v;
-   float measure;
    string tmp;
 
    if(!in.eof())
    {
       getline(in, tmp, '\n');
       _split(tmp, ',', v);
-      for (int i = 0; i < v.size(); ++i)
+      for (int i = 0; i < (int)v.size(); ++i)
       {
-         if (i == v.size()-1)
+         if (i == (int)v.size()-1)
          {
             v[i].erase(v[i].size()-1);
          }
@@ -66,7 +65,7 @@ void System::load_sensors_from_csv(istream &in)
 
 int System::get_amount_of_sensors_in_system()
 {
-	return sensor_array.size();
+	return (int)sensor_array.size();
 }
 
 string System::get_sensor_in_system_at_index(const int &index)
@@ -95,26 +94,9 @@ float System::get_temperature_at_of_sensor_at_index(const int & index , const in
 	return pepe;
 }
 
-void System::load_sensor_with_array(const Array<float> & arr, const string &name)
-{
-	size_t j=0 , k=0;
-
-	for (j=0 ; j < get_amount_of_sensors_in_system() ; j++)
-	{
-		if (name == get_sensor_in_system_at_index(j))
-		{
-			for (k=0 ; k < arr.size() ; k++)
-			{
-				(sensor_array[j])->add_temperature_to_sensor( arr[k] );
-			}
-		}
-	}
-	
-}
-
 int System::get_amount_of_valid_temperatures_in_range_at_index(const int & index, const int & left, const int &right)
 {
-   if (index >= sensor_array.size())
+   if (index >= (int) sensor_array.size())
    {
       return -1;
    }
@@ -129,7 +111,7 @@ std::istream & operator>>(std::istream &in, System & system)
    
    if( !(in >> measure) )
    {
-      measure = -273;
+      measure = INVALID_TEMPERATURE;
    }
    system.sensor_array[i]->add_temperature_to_sensor(measure);
    while( (in >> ch) && (ch == ',') )
@@ -137,54 +119,11 @@ std::istream & operator>>(std::istream &in, System & system)
       i++; 
       if( !(in >> measure) )
       {
-         measure = -273;
+         measure = INVALID_TEMPERATURE;
       }
       system.sensor_array[i]->add_temperature_to_sensor(measure);
    } 
     return in;
 }
-/*
-void System::load_querys_from_csv(istream & qin , Array<Query> & query_array)
-{
-   Array<string> v;
-   float measure;
-   string tmp;
-   int i=0 , k=0;
 
-      while (!qin.eof()) 
-   {
-         getline(qin, tmp, '\n');
-         _split(tmp, ',', v);
-         for (i = 0 ; i<v.size() ; i++)
-         {
-            if (i<(v.size() -2))
-            {
-               query_array[k].add_sensor_to_query(v[i]);
-            }else
-            {
-               if ( i=(v.size()-2))
-               {
-                  stringstream str_st(v[i]);
-                  if(!(str_st>>left_bound) || (left_bound < 0))
-                  {
-                     cout << "query rota izq" << endl;
-                     left_bound = -1;
-                  }
-               }else
-               {
-                  stringstream str_st(v[i]);
-                  if(!(str_st>>right_bound) || (right_bound < 0))
-                  {
-                     cout << "query rota der" << endl;
-                     right_bound = -1;
-                  }
-               }
-            }
-         }
-         
-         v.clear();
-      }
-}
-
-*/
 #endif
