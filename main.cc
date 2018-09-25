@@ -35,23 +35,39 @@ static fstream ofs;			// Output File Stream (derivada de la clase ofstream que d
 
 static void opt_data(string const &arg)
 {
-	// Si el nombre del archivos es "-", usaremos la entrada
-	// estándar. De lo contrario, abrimos un archivo en modo
-	// de lectura.
-	//
-	if (arg == "-") {
+	if (arg == "-") 
+	{
 		iss = &cin;		// Establezco la entrada estandar cin como flujo de entrada
 	}
-	else {
-		ifs.open(arg.c_str(), ios::in); // c_str(): Returns a pointer to an array that contains a null-terminated
-										// sequence of characters (i.e., a C-string) representing
-										// the current value of the string object.
+	else 
+	{
+		ifs.open(arg.c_str(), ios::in); 
 		iss = &ifs;
 	}
 
-	// Verificamos que el stream este OK.
-	//
-	if (!iss->good()) {
+	if (!iss->good()) 
+	{
+		cerr << "cannot open "
+		     << arg
+		     << "."
+		     << endl;
+		exit(1);
+	}
+}
+
+static void opt_input(string const &arg)
+{
+	if (arg == "-") 
+	{
+		qss = &cin;		// Establezco la entrada estandar cin como flujo de entrada
+	}
+	else 
+	{
+		ifs2.open(arg.c_str(), ios::in); 
+		qss = &ifs2;
+	}
+
+	if (!qss->good()) {
 		cerr << "cannot open "
 		     << arg
 		     << "."
@@ -84,33 +100,6 @@ static void opt_output(string const &arg)
 	}
 }
 
-static void opt_input(string const &arg)
-{
-	// Si el nombre del archivos es "-", usaremos la entrada
-	// estándar. De lo contrario, abrimos un archivo en modo
-	// de lectura.
-	//
-	if (arg == "-") {
-		qss = &cin;		// Establezco la entrada estandar cin como flujo de entrada
-	}
-	else {
-		ifs2.open(arg.c_str(), ios::in); // c_str(): Returns a pointer to an array that contains a null-terminated
-										// sequence of characters (i.e., a C-string) representing
-										// the current value of the string object.
-		qss = &ifs2;
-	}
-
-	// Verificamos que el stream este OK.
-	//
-	if (!qss->good()) {
-		cerr << "cannot open "
-		     << arg
-		     << "."
-		     << endl;
-		exit(1);
-	}
-}
-
 static void opt_help(string const &arg)
 {
 	cout << "cmdline [-d file] [-i file] [-o file]"
@@ -133,7 +122,7 @@ int main(int argc, char * const argv[])
 	for (i=0 ; i<query_array.size() ; i++)
 	{
 		query_array[(size_t)i]->set_target_system(&system);
-		query_array[(size_t)i]->execute_query();
+		query_array[(size_t)i]->execute_query(*oss);
 	}
 	for (i=0 ; i<query_array.size() ; i++)
 	{

@@ -51,7 +51,7 @@ class Query
 		int get_left_bound();
 		int get_right_bound();
 
-		void execute_query();
+		void execute_query(ostream &);
 
 		friend istream & operator>>(std::istream &in, Query & query);
 		static void load_querys_from_csv(istream& , Array<Query *>& );

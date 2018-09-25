@@ -105,47 +105,55 @@ string Query::get_sensor_in_query_at_index(const int &index)
 	return sensors_in_query[index];
 }
 
-void Query::execute_query()
+void Query::execute_query(ostream & os)
 {
 	int i=0 , j=0 , k=0;
 	_validate_query();
+	int amount_of_sensors_in_query = get_amount_of_sensors_in_query();
+	int amount_of_sensors_in_system = target_system->get_amount_of_sensors_in_system();
+
 	if (valid_query == TRUE)
 	{
-		float average=0, min=0, max=0, amount_of_measures =0;
-		if (get_amount_of_sensors_in_query() > 1)
+		if (amount_of_sensors_in_query > 1)
 		{
 			type_of_query = MULTI_SENSOR;
 		}
 		if (type_of_query == MONO_SENSOR)
 		{
-			for (i=0 ;  i< get_amount_of_sensors_in_query() ; i++)
+			for (i=0 ;  i < amount_of_sensors_in_query ; i++)
 			{
-				for (j=0 ; j < target_system->get_amount_of_sensors_in_system() ; j++)
+				for (j=0 ; j < amount_of_sensors_in_system ; j++)
 				{
 					if (sensors_in_query[i] == target_system->get_sensor_in_system_at_index(j))
 					{
-						average = target_system->get_average_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound);
-						min = target_system->get_min_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound);
-						max = target_system->get_max_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound);
-						amount_of_measures = target_system->get_amount_of_valid_temperatures_in_range_at_index(j,left_bound,right_bound);
+						int amount_of_valid_temperatures = target_system->get_amount_of_valid_temperatures_in_range_at_index(j,left_bound,right_bound);
+						if(amount_of_valid_temperatures > 0)
+						{
+							os<<target_system->get_average_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound)<<","
+							<<target_system->get_min_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound)<<","
+							<<target_system->get_max_temperature_in_range_of_sensor_at_index(j,left_bound,right_bound)<<","
+							<<amount_of_valid_temperatures<<endl;
+						}
+						else	os << MSG_NO_DATA << endl;
 					}
 				}
 			}
 		}else
 		{
 			sensor *aux_sensor = new sensor("aux_sensor");
-			float accum =0;
-			float aux=0;
+			float accum = 0;
+			float aux = 0;
 			size_t valid_meassures = 0;
+
 			for (k = left_bound ; k<right_bound ; k++)
 			{
-				for (i=0 ;  i<get_amount_of_sensors_in_query() ; i++)
+				for (i=0 ;  i < amount_of_sensors_in_query ; i++)
 				{
-					for (j=0 ; j < target_system->get_amount_of_sensors_in_system() ; j++)
+					for (j=0 ; j < amount_of_sensors_in_system ; j++)
 					{
 						if (sensors_in_query[i] == target_system->get_sensor_in_system_at_index(j))
 						{
-							if((aux = target_system->get_temperature_at_of_sensor_at_index(j,k)) != INVALID_TEMPERATURE)
+							if((aux = target_system->get_temperature_at_of_sensor_at_index(j,k)) != -273)
 							{
 								accum += aux;
 								valid_meassures++;
@@ -158,37 +166,33 @@ void Query::execute_query()
 				}
 				if (valid_meassures == 0)
 				{
-					aux_sensor->add_temperature_to_sensor(INVALID_TEMPERATURE);
+					aux_sensor->add_temperature_to_sensor(-273);
 				}else 
 				{
 					aux_sensor->add_temperature_to_sensor(accum/valid_meassures);
 				}
-				accum =0;
+				accum = 0;
 				valid_meassures = 0;
 			}
-			
-			average = aux_sensor->get_average_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures());
-			min = aux_sensor->get_min_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures());
-			max = aux_sensor->get_max_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures());
-			amount_of_measures = aux_sensor->get_amount_of_valid_temperatures_in_range(0,aux_sensor->get_amount_of_temperature_measures());
-
+			int amount_of_valid_temperatures = aux_sensor->get_amount_of_valid_temperatures_in_range(0,aux_sensor->get_amount_of_temperature_measures());
+			if(amount_of_valid_temperatures > 0)
+			{	
+				os<<aux_sensor->get_average_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures())<<","
+				<<aux_sensor->get_min_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures())<<","
+				<<aux_sensor->get_max_temperature_in_range(0,aux_sensor->get_amount_of_temperature_measures())<<","
+				<< amount_of_valid_temperatures << endl;
+			}
+			else os << MSG_NO_DATA << endl;
 			delete aux_sensor;
-		}
-		if (amount_of_measures == 0)
-		{
-			cout << MSG_NO_DATA << endl;
-		}else
-		{
-			cout << average << " " << min << " " << max << " " << amount_of_measures << endl;
 		}
 	}else
 	{
 		if (left_bound < 0 || right_bound < 0)
 		{
-			cout << MSG_BAD_QUERY << endl;
+			os << MSG_BAD_QUERY << endl;
 		}else
 		{
-			cout << MSG_UNKNOWN_ID << endl;
+			os << MSG_UNKNOWN_ID << endl;
 		}
 	}	
 }
@@ -231,20 +235,20 @@ void Query::_validate_query()
 
 istream & operator>>(std::istream &in, Query & query)
 {
-   Array<string> v;
+   Array<string> v, sensors_to_add;
    string tmp;
-   int i=0;
 
    getline(in, tmp, '\n');
    _split(tmp, ',', v);
-   while (i < (int)v.size()-2)
+   if(v.size() != 3)
+      query.left_bound = query.right_bound = -1;
+   _split(v[0],';',sensors_to_add);
+   for (int i = 0; i < (int) sensors_to_add.size(); ++i)
    {
-   		query.add_sensor_to_query(v[i]);
-   		i++;
+   	query.add_sensor_to_query(sensors_to_add[i]);
    }
-
-   query.set_left_bound(v[v.size()-2]);
-   query.set_right_bound(v[v.size()-1]);
+   query.set_left_bound(v[1]);
+   query.set_right_bound(v[2]);
 
    return in;
 }
